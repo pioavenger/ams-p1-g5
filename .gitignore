@@ -1,0 +1,10 @@
+# cordova
+app/platforms
+app/plugins
+
+# Node
+app/node_modules
+
+
+*.log
+*.tmp
