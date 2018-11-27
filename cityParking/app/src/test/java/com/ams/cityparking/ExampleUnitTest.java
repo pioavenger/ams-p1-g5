@@ -1,4 +1,4 @@
-package com.ams.cityparking.cityparking;
+package com.ams.cityparking;
 
 import org.junit.Test;
 
