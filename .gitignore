@@ -1,10 +1,37 @@
-# cordova
-app/platforms
-app/plugins
+# Built application files
+app/build
 
-# Node
-app/node_modules
+# Crashlytics configuations
+app/com_crashlytics_export_strings.xml
 
+# Local configuration file (sdk path, etc)
+app/local.properties
 
-*.log
-*.tmp
+# Gradle generated files
+app/.gradle/
+
+# Signing files
+app/.signing/
+
+# User-specific configurations
+app/.idea/libraries/
+app/.idea/workspace.xml
+app/.idea/tasks.xml
+app/.idea/.name
+app/.idea/compiler.xml
+app/.idea/copyright/profiles_settings.xml
+app/.idea/encodings.xml
+app/.idea/misc.xml
+app/.idea/modules.xml
+app/.idea/scopes/scope_settings.xml
+app/.idea/vcs.xml
+app/*.iml
+
+# OS-specific files
+app/.DS_Store
+app/.DS_Store?
+app/._*
+app/.Spotlight-V100
+app/.Trashes
+app/ehthumbs.db
+app/Thumbs.db
