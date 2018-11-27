@@ -25,6 +25,7 @@ app/.idea/misc.xml
 app/.idea/modules.xml
 app/.idea/scopes/scope_settings.xml
 app/.idea/vcs.xml
+app/.idea/caches/build_file_checksums.ser
 app/*.iml
 
 # OS-specific files
