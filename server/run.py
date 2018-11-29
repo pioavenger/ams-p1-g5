@@ -178,6 +178,8 @@ class App(object):
 
                     return [{"error": "OK", "mid": tmp_mid, "cc": cc, "valid": valid, "ppid": pid_free[0], "pfree": pid_free[1]}]
 
+	    return [{"error": "NO_SAVED_CREDITCARD_ERROR"}]
+
         if save:
             creditcards = db.execute('SELECT cc FROM creditinfo')
 
