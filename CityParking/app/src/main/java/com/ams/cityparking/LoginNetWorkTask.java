@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,22 +21,24 @@ class LoginNetWorkTask extends NetWorkTask {
 
     @Override
     protected void onPostExecute(Boolean result) {
+        if(!result){
+            // cant connect
+            Toast toast = Toast.makeText(activity, "no connection!" ,Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
         // {"error": "OK", "email": email, "password": password}
 
         // convert payload to String
+        Log.d("NetWorkTask",Integer.toString(payloadSize));
         String response = new String(payload, 0, payloadSize);
-
-        // covert to json
-        JSONObject json_response = null;
         try {
-            json_response = new JSONObject(response);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            // covert to json
+            JSONArray array = new JSONArray(response);
+            JSONObject json_response = (JSONObject) array.get(0);
 
-        // read json
-        String error;
-        try {
+           // read json
+            String error;
             // get error
             error = json_response.getString("error");
             if(error.equals("OK")){
