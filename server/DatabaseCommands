@@ -1,0 +1,40 @@
+Just comands to help with the database creation/maintenance.
+
+CREATE TABLE members(
+	pmid INTEGER PRIMARY KEY AUTOINCREMENT,
+	mname TEXT,
+	email TEXT,
+	password TEXT,
+	carplate TEXT,
+	role TEXT,
+	online INTEGER,
+	confirmed INTEGER
+);
+
+CREATE TABLE providers(
+	ppid INTEGER PRIMARY KEY AUTOINCREMENT,
+	pname TEXT,
+	ptotal INTEGER,
+	pfree INTEGER
+);
+
+CREATE TABLE spaces(
+	psid INTEGER PRIMARY KEY AUTOINCREMENT,
+	pid INTEGER,
+	town TEXT,
+	free INTEGER
+);
+
+CREATE TABLE bookings(
+	ptid INTEGER PRIMARY KEY AUTOINCREMENT,
+	mid INTEGER,
+	sid INTEGER
+);
+
+CREATE TABLE creditinfo(
+	pcid INTEGER PRIMARY KEY AUTOINCREMENT,
+	mid INTEGER,	
+	cc TEXT,
+	valid TEXT
+);
+
