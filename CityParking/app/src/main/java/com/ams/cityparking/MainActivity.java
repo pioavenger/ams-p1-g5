@@ -1,5 +1,6 @@
 package com.ams.cityparking;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -12,7 +13,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // read login preferences
+        SharedPreferences sp = this.getSharedPreferences("login_prefs", this.MODE_PRIVATE);
+        String email = sp.getString("email", "");
+        String password = sp.getString("password", "");
+        if(email.equals("") || password.equals(""))
+            setContentView(R.layout.activity_main);
+        else
+            startActivity(new Intent(this, HomeActivity.class));
     }
 
     public void start(View view) {

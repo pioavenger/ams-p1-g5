@@ -1,6 +1,7 @@
 package com.ams.cityparking;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -42,7 +43,14 @@ class LoginNetWorkTask extends NetWorkTask {
             // get error
             error = json_response.getString("error");
             if(error.equals("OK")){
-                String email = json_response.getString("error");
+                String email = json_response.getString("email");
+                String password = json_response.getString("password");
+                // store locally
+                SharedPreferences sp = activity.getSharedPreferences("login_prefs", activity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("email", email);
+                editor.putString("password", password);
+                editor.commit();
                 if(result) {
                     Log.d("NetWorkTask", "finished: " + email);
                 }else{

@@ -67,24 +67,24 @@ class App(object):
 
         found = False
         for mail in emails:
-            if email == mail:
+            if email == mail[0]:
                 found = True
                 break
 
         if not found:
             return [{"error": "USER_NOT_FOUND_ERROR"}]
 
-        log_pass = db.execute('SELECT password FROM members WHERE email=?', email)
+        log_pass = db.execute('SELECT password FROM members WHERE email=?', (email,))
 
-        if password != log_pass:
+        if password != log_pass.fetchone()[0]:
             return [{"error": "INCORRECT_PASSWORD_ERROR"}]
 
-        ison = db.execute('SELECT online FROM members WHERE email=?',email)
+        ison = db.execute('SELECT online FROM members WHERE email=?',(email,))
 
-        if ison == 1:
+        if ison.fetchone()[0] == 1:
             return [{"error": "MEMBER_ALREADY_ONLINE_ERROR"}]
 
-        db.execute('UPDATE online SET ? WHERE email = ?',(1,email))
+        db.execute('UPDATE members SET online=? WHERE email = ?',(1,email))
 
         db.commit()
         db.close()
@@ -96,7 +96,7 @@ class App(object):
     def signout(self,email):
         db = sql.connect("database.db")
 
-        ison = db.execute('SELECT online FROM members WHERE email=?',email)
+        ison = db.execute('SELECT online FROM members WHERE email=?',(email,))
 
         if ison == 0:
             return [{"error": "MEMBER_ALREADY_OFFLINE_ERROR"}]

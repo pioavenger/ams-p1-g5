@@ -19,7 +19,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void login(View view) {
         // change MainActivity.class to {ActivityName}.class
-        LoginNetWorkTask task = new LoginNetWorkTask("http://192.168.1.76:8000/signin",this,new Intent(this, MainActivity.class));
+        LoginNetWorkTask task = new LoginNetWorkTask("http://192.168.1.76:8000/signin",this,new Intent(this, HomeActivity.class));
         // get params
         String email = ((TextView) findViewById(R.id.user_text)).getText().toString();
         String password = ((TextView) findViewById(R.id.password_text)).getText().toString();
