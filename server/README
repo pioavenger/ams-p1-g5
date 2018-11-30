@@ -1,0 +1,7 @@
+How to prepare the database for tests:
+
+1- Delete "database.db".
+2- Create a new file with the same name as the one just deleted.
+3- Run the command: sqlite3 database.db
+4- Run the commands present in the file "DatabaseCommands" to get an empty database.
+5- Run the commands present in the file "DatabaseFiller" to get a basic scenario into the database.

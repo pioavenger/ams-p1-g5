@@ -216,6 +216,8 @@ class App(object):
 
         return [{"error": "OK", "mid": tmp_mid, "cc": cc, "valid": valid, "ppid": pid_free[0], "pfree": pid_free[1]}]
 
+app = App()
+
 config={
         '/': {
             'tools.staticdir.root': os.path.abspath(os.getcwd())
@@ -225,7 +227,9 @@ config={
             'tools.staticdir.dir': './static'
         }
 }
-cherrypy.config.update({'server.socket_host': '192.168.1.76',
+
+cherrypy.config.update({'server.socket_host': 'localhost',
                         'server.socket_port': 8000,
                        })
-cherrypy.quickstart(App(), "/",config)
+
+cherrypy.quickstart(app(), "/",config)
