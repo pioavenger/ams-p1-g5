@@ -97,11 +97,11 @@ class App(object):
         db = sql.connect("database.db")
 
         ison = db.execute('SELECT online FROM members WHERE email=?',(email,))
-
-        if ison == 0:
+        
+        if ison.fetchone()[0] == 0:
             return [{"error": "MEMBER_ALREADY_OFFLINE_ERROR"}]
 
-        db.execute('UPDATE online SET ? WHERE email=?',(0,email))
+        db.execute('UPDATE members SET online=? WHERE email=?',(0,email))
 
         db.commit()
         db.close()
@@ -216,8 +216,6 @@ class App(object):
 
         return [{"error": "OK", "mid": tmp_mid, "cc": cc, "valid": valid, "ppid": pid_free[0], "pfree": pid_free[1]}]
 
-app = App()
-
 config={
         '/': {
             'tools.staticdir.root': os.path.abspath(os.getcwd())
@@ -228,8 +226,17 @@ config={
         }
 }
 
-cherrypy.config.update({'server.socket_host': 'localhost',
-                        'server.socket_port': 8000,
+import sys
+ip = "127.0.0.1"
+port = 8000
+if len(sys.argv) == 2:
+    ip = sys.argv[1]
+elif len(sys.argv) == 3:
+    ip = sys.argv[1]
+    port = int(sys.argv[2])
+
+cherrypy.config.update({'server.socket_host': ip,
+                        'server.socket_port': port,
                        })
 
-cherrypy.quickstart(app(), "/",config)
+cherrypy.quickstart(App(), "/",config)

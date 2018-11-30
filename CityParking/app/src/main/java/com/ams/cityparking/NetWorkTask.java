@@ -1,6 +1,9 @@
 package com.ams.cityparking;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.util.Log;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -15,7 +18,7 @@ class NetWorkTask extends AsyncTask<String,Void,Boolean>{
     private String urlstr;
 
     protected NetWorkTask(String url){
-        this.urlstr = url;
+        this.urlstr = "http://"+url;
     }
 
     @Override
@@ -30,8 +33,11 @@ class NetWorkTask extends AsyncTask<String,Void,Boolean>{
 
         URL url;
         try {
+            Log.d("CityParking","URL " + new_urlstr);
             url = new URL(new_urlstr);
         }catch (MalformedURLException e) {
+            Log.d("CityParking","BAD URL: "+new_urlstr);
+            Log.d("CityParking", e.toString());
             return false;
         }
 
@@ -40,6 +46,7 @@ class NetWorkTask extends AsyncTask<String,Void,Boolean>{
         try {
             connection = (HttpURLConnection) url.openConnection();
         } catch (IOException e) {
+            Log.d("CityParking","FAILED TO CONNECT");
             return false;
         }
 
@@ -53,6 +60,7 @@ class NetWorkTask extends AsyncTask<String,Void,Boolean>{
             while((bytesRead = in.read(payload)) != -1)
                 payloadSize += bytesRead;
         } catch (IOException e) {
+            Log.d("CityParking","FAILED TO READ");
             result = false;
         } finally {
             connection.disconnect();

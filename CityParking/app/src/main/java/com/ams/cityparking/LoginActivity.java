@@ -17,9 +17,16 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     public void login(View view) {
-        // change MainActivity.class to {ActivityName}.class
-        LoginNetWorkTask task = new LoginNetWorkTask("http://192.168.1.76:8000/signin",this,new Intent(this, HomeActivity.class));
+        LoginNetWorkTask task = new LoginNetWorkTask("/signin",this);
+        Log.d("CityParking","hmm");
         // get params
         String email = ((TextView) findViewById(R.id.user_text)).getText().toString();
         String password = ((TextView) findViewById(R.id.password_text)).getText().toString();
@@ -32,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
             toast = Toast.makeText(this, "insert email" ,Toast.LENGTH_SHORT);
             toast.show();
         }else if(password.equals("")){
-            toast = Toast.makeText(this, "insert email" ,Toast.LENGTH_SHORT);
+            toast = Toast.makeText(this, "insert password" ,Toast.LENGTH_SHORT);
             toast.show();
         }else {
             String[] params = {"email=" + email, "password=" + password};
@@ -41,8 +48,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void goToStart(View view) {
+    public void register(View view) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 }

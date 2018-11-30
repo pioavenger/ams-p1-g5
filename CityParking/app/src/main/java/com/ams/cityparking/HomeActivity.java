@@ -6,13 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity {
-
-    private TextView mTextMessage;
     private String email;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -22,13 +21,13 @@ public class HomeActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+                    Log.d("CityParking-HA","home");
                     return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                    Log.d("CityParking-HA","browse");
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                    Log.d("CityParking-HA","notification");
                     return true;
             }
             return false;
@@ -39,23 +38,20 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        // set home selected
-        navigation.getMenu().getItem(0).setChecked(true);
 
         // read login preferences
         SharedPreferences sp = this.getSharedPreferences("login_prefs", this.MODE_PRIVATE);
         email = sp.getString("email", "");
         // change textview
-        mTextMessage.append(", "+email.split("@")[0]);
+        ((TextView) findViewById(R.id.welcome_text)).append(" "+email.split("@")[0]);
     }
 
     public void logout(View view) {
-        LoginNetWorkTask task = new LoginNetWorkTask("http://192.168.1.76:8000/signout",this,new Intent(this, MainActivity.class));
+        LogoutNetWorkTask task = new LogoutNetWorkTask("/signout",this);
         String[] params = {"email=" + email};
+        Log.d("CityParking-HA",email);
         // send
         task.execute(params);
     }
