@@ -33,11 +33,8 @@ class NetWorkTask extends AsyncTask<String,Void,Boolean>{
 
         URL url;
         try {
-            Log.d("CityParking","URL " + new_urlstr);
             url = new URL(new_urlstr);
         }catch (MalformedURLException e) {
-            Log.d("CityParking","BAD URL: "+new_urlstr);
-            Log.d("CityParking", e.toString());
             return false;
         }
 

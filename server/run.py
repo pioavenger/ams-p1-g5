@@ -13,11 +13,14 @@ class App(object):
     def signup(self,mname,password1,password2,email,carplate):
         mail_sections1 = email.split('@')
         mail_sections2 = mail_sections1[1].split('.')
+        
+        if mail_sections2[0] == "": 
+            return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
 
         for char in mail_sections2[0]:
             if not char.isalpha():
                 return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
-
+        
         for char in mail_sections2[1]:
             if not char.isalpha():
                 return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]

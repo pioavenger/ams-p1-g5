@@ -31,10 +31,11 @@ public class SignupActivity extends AppCompatActivity {
         String email = ((TextView) findViewById(R.id.email_text)).getText().toString();
         // check params
         Toast toast;
-        if(email.equals("") && password.equals("") && username.equals("")){
+        if(email.equals("") || password.equals("") || username.equals("")){
             toast = Toast.makeText(this, "insert missing fields" ,Toast.LENGTH_SHORT);
             toast.show();
         }else {
+            username = username.replace(" ","+");
             String[] params = {"mname="+username,"password1=" + password, "password2=" + password, "email=" + email, "carplate="+"AB-CD-EF"};
             // send
             task.execute(params);

@@ -20,13 +20,10 @@ public class HomeActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    Log.d("CityParking-HA","home");
                     return true;
                 case R.id.navigation_dashboard:
-                    Log.d("CityParking-HA","browse");
                     return true;
                 case R.id.navigation_notifications:
-                    Log.d("CityParking-HA","notification");
                     return true;
             }
             return false;

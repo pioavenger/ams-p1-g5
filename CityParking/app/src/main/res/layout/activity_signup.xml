@@ -9,13 +9,13 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="195dp"
-        android:layout_height="404dp"
+        android:layout_height="489dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.098">
+        app:layout_constraintVertical_bias="0.100000024">
 
         <Button
             android:id="@+id/signup_button"
@@ -56,18 +56,18 @@
             android:ems="10"
             android:hint="Username"
             android:inputType="textEmailAddress"
-            app:layout_constraintBottom_toTopOf="@+id/password_text"
+            app:layout_constraintBottom_toTopOf="@+id/email_text"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <EditText
             android:id="@+id/password_text"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="8dp"
             android:ems="10"
             android:hint="Password"
             android:inputType="textPassword"
-            app:layout_constraintBottom_toTopOf="@+id/email_text"
+            app:layout_constraintBottom_toTopOf="@+id/signup_button"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
@@ -85,47 +85,66 @@
             android:id="@+id/password_icon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/imageView"
+            app:layout_constraintBottom_toTopOf="@+id/signup_button"
             app:layout_constraintEnd_toStartOf="@+id/password_text"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_icon"
             app:srcCompat="@drawable/ic_vpn_key_black_24dp" />
 
         <ImageView
             android:id="@+id/user_icon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="132dp"
+            android:layout_marginBottom="40dp"
+            app:layout_constraintBottom_toTopOf="@+id/email_icon"
             app:layout_constraintEnd_toStartOf="@+id/user_text"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_person_black_24dp" />
 
         <EditText
             android:id="@+id/email_text"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="20dp"
             android:ems="10"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            app:layout_constraintBottom_toTopOf="@+id/signup_button"
+            app:layout_constraintBottom_toTopOf="@+id/password_text"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
+            android:id="@+id/email_icon"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toTopOf="@+id/signup_button"
+            android:layout_marginBottom="44dp"
+            app:layout_constraintBottom_toTopOf="@+id/password_icon"
             app:layout_constraintEnd_toStartOf="@+id/email_text"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/ic_email_black_24dp" />
+
+        <ImageView
+            android:id="@+id/CPlogo"
+            android:layout_width="96dp"
+            android:layout_height="71dp"
+            android:layout_marginTop="36dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_text"
+            app:srcCompat="@drawable/ic_cityparkinglogo" />
+
+        <TextView
+            android:id="@+id/CityParking_text"
+            android:layout_width="83dp"
+            android:layout_height="21dp"
+            android:text="CityParking"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/CPlogo" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

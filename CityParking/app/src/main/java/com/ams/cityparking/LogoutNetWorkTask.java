@@ -35,7 +35,6 @@ class LogoutNetWorkTask extends NetWorkTask {
         editor.commit();
 
         // change to main activity
-        Log.d("CityParking-LNWT","imout");
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
         activity.finish();

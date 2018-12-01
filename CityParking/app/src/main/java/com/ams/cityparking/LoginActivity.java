@@ -26,7 +26,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void login(View view) {
         LoginNetWorkTask task = new LoginNetWorkTask("/signin",this);
-        Log.d("CityParking","hmm");
         // get params
         String email = ((TextView) findViewById(R.id.user_text)).getText().toString();
         String password = ((TextView) findViewById(R.id.password_text)).getText().toString();
@@ -51,5 +50,6 @@ public class LoginActivity extends AppCompatActivity {
     public void register(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
         startActivity(intent);
+        finish();
     }
 }

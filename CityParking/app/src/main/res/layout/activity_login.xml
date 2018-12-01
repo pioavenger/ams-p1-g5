@@ -10,13 +10,34 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="195dp"
-        android:layout_height="404dp"
+        android:layout_height="489dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.098">
+        app:layout_constraintVertical_bias="0.100000024">
+
+        <ImageView
+            android:id="@+id/CPlogo2"
+            android:layout_width="96dp"
+            android:layout_height="71dp"
+            android:layout_marginTop="36dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_text"
+            app:srcCompat="@drawable/ic_cityparkinglogo" />
+
+        <TextView
+            android:id="@+id/cityParking_text"
+            android:layout_width="83dp"
+            android:layout_height="21dp"
+            android:text="CityParking"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/CPlogo2" />
 
         <Button
             android:id="@+id/login_button"
@@ -55,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:ems="10"
-            android:hint="Username"
+            android:hint="Email"
             android:inputType="textEmailAddress"
             app:layout_constraintBottom_toTopOf="@+id/password_text"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -64,7 +85,7 @@
             android:id="@+id/password_text"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="8dp"
             android:ems="10"
             android:hint="Password"
             android:inputType="textPassword"
@@ -86,7 +107,7 @@
             android:id="@+id/password_icon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toTopOf="@+id/login_button"
             app:layout_constraintEnd_toStartOf="@+id/password_text"
             app:layout_constraintHorizontal_bias="0.0"
@@ -104,8 +125,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/ic_person_black_24dp" />
+            app:layout_constraintVertical_bias="0.751"
+            app:srcCompat="@drawable/ic_email_black_24dp" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -43,6 +43,8 @@ public class SignupNetWorkTask extends NetWorkTask {
             if(error.equals("OK")){
                 // change to home activity
                 Intent intent = new Intent(new Intent(activity, LoginActivity.class));
+                toast = Toast.makeText(activity, "success!" ,Toast.LENGTH_SHORT);
+                toast.show();
                 activity.startActivity(intent);
                 activity.finish();
             }else if(error.equals("WRONG_EMAIL_FORMAT_ERROR")){
