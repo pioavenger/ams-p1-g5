@@ -12,11 +12,10 @@ class App(object):
     @cherrypy.tools.json_out()
     def signup(self,mname,password1,password2,email,carplate):
         mail_sections1 = email.split('@')
+        if len(mail_sections1) == 1 or mail_sections1[0] == "": 
+            return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
         mail_sections2 = mail_sections1[1].split('.')
         
-        if mail_sections2[0] == "": 
-            return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
-
         for char in mail_sections2[0]:
             if not char.isalpha():
                 return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
