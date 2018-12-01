@@ -44,10 +44,12 @@ class LoginNetWorkTask extends NetWorkTask {
             error = json_response.getString("error");
             if(error.equals("OK")){
                 String email = json_response.getString("email");
+                String username = json_response.getString("mname");
                 // store locally
                 SharedPreferences sp = activity.getSharedPreferences("login_prefs", activity.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("email", email);
+                editor.putString("username", username);
                 editor.commit();
                 if(result) {
                     Log.d("CityParking", "finished: " + email);

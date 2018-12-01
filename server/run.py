@@ -47,16 +47,18 @@ class App(object):
         if password1 != password2:
             return [{"error": "PASSWORD_MISMATCH_ERROR"}]
 
-        db.execute('INSERT INTO members(mname,email,password,carplate,role,online,confirmed) VALUES (?,?,?,?,?,?,?)',(mname, password1, email, carplate, "Member", 0, 0))
+        db.execute('INSERT INTO members(mname,email,password,carplate,role,online,confirmed) VALUES (?,?,?,?,?,?,?)',(mname, email, password1, carplate, "Member", 0, 1))
 
         #send confirmation email
 
-        pmid = db.execute('SELECT pmid FROM members WHERE email=?', email)
+        # pmid = db.execute('SELECT pmid FROM members WHERE email=?',(email,))
 
         db.commit()
         db.close()
 
-        return [{"error": "OK", "pmid": pmid, "mname": mname, "email": email, "password": password1, "carplate": carplate, "role": "Member", "online": 0, "confirmed": 0}]
+        #return [{"error": "OK", "pmid": pmid, "mname": mname, "email": email, "password": password1, "carplate": carplate, "role": "Member", "online": 0, "confirmed": 0}]
+        # simplified for 1st delivery
+        return [{"error": "OK", "mname": mname, "email": email}]
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -86,10 +88,14 @@ class App(object):
 
         db.execute('UPDATE members SET online=? WHERE email = ?',(1,email))
 
+        mname = db.execute('SELECT mname FROM members WHERE email=?',(email,)).fetchone()[0];
+
         db.commit()
         db.close()
 
-        return [{"error": "OK", "email": email, "password": password}]
+        # return [{"error": "OK", "email": email, "password": password,}]
+        # simplified for 1st delivery
+        return [{"error": "OK", "mname": mname, "email": email}]
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -97,7 +103,7 @@ class App(object):
         db = sql.connect("database.db")
 
         ison = db.execute('SELECT online FROM members WHERE email=?',(email,))
-        
+
         if ison.fetchone()[0] == 0:
             return [{"error": "MEMBER_ALREADY_OFFLINE_ERROR"}]
 
@@ -111,7 +117,7 @@ class App(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def browse(self,email,sort_type,recent):
-        
+
 	# Sort types:
 	# 0 - Price     - not yet implemented
 	# 1 - Distance	- not yet implemented
@@ -123,7 +129,7 @@ class App(object):
 
 	db = sql.connect("database.db")
 
-	
+
 
 
 
@@ -134,7 +140,7 @@ class App(object):
     @cherrypy.tools.json_out()
     def book(self,email,cc,valid,save,use_saved,sid):
         db = sql.connect("database.db")
-	
+
         digit_count = 0
         for number in cc:
             digit_count += 1

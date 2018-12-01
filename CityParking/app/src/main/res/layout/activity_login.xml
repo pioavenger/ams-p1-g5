@@ -27,7 +27,7 @@
             android:onClick="login"
             android:text="Entrar"
             android:textAllCaps="false"
-            android:textColor="@color/colorBackground"
+            android:textColor="@android:color/background_light"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/create_account_button"
             app:layout_constraintEnd_toEndOf="parent"

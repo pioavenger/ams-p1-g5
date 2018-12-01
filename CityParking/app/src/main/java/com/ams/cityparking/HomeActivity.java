@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity {
-    private String email;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -43,12 +42,16 @@ public class HomeActivity extends AppCompatActivity {
 
         // read login preferences
         SharedPreferences sp = this.getSharedPreferences("login_prefs", this.MODE_PRIVATE);
-        email = sp.getString("email", "");
+        String username = sp.getString("username", "");
         // change textview
-        ((TextView) findViewById(R.id.welcome_text)).append(" "+email.split("@")[0]);
+        ((TextView) findViewById(R.id.username_welcome_text)).append(username);
     }
 
     public void logout(View view) {
+        // get email
+        SharedPreferences sp = this.getSharedPreferences("login_prefs", this.MODE_PRIVATE);
+        String email = sp.getString("email", "");
+
         LogoutNetWorkTask task = new LogoutNetWorkTask("/signout",this);
         String[] params = {"email=" + email};
         Log.d("CityParking-HA",email);

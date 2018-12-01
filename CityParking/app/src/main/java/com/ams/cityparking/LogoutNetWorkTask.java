@@ -31,6 +31,7 @@ class LogoutNetWorkTask extends NetWorkTask {
         SharedPreferences sp = activity.getSharedPreferences("login_prefs", activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("email", "");
+        editor.putString("username", "");
         editor.commit();
 
         // change to main activity

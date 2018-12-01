@@ -37,6 +37,7 @@
             android:onClick="start"
             android:text="Começar"
             android:textAllCaps="true"
+            android:textColor="@android:color/background_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
