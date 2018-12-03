@@ -7,6 +7,9 @@ CREATE TABLE members(
 	password TEXT,
 	carplate TEXT,
 	role TEXT,
+	mxpos INTEGER,
+	mypos INTEGER,
+	rsid INTEGER,
 	online INTEGER,
 	confirmed INTEGER
 );
@@ -21,7 +24,10 @@ CREATE TABLE providers(
 CREATE TABLE spaces(
 	psid INTEGER PRIMARY KEY AUTOINCREMENT,
 	pid INTEGER,
-	town TEXT,
+	sxpos INTEGER,
+	sypos INTEGER,
+	cpmin INTEGER,
+	rating INTEGER,
 	free INTEGER
 );
 

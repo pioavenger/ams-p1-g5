@@ -2,6 +2,8 @@ import os
 import cherrypy
 import json
 import sqlite3 as sql
+import random
+import math
 
 class App(object):
 
@@ -12,8 +14,10 @@ class App(object):
     @cherrypy.tools.json_out()
     def signup(self,mname,password1,password2,email,carplate):
         mail_sections1 = email.split('@')
+
         if len(mail_sections1) == 1 or mail_sections1[0] == "": 
             return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
+
         mail_sections2 = mail_sections1[1].split('.')
         
         for char in mail_sections2[0]:
@@ -43,13 +47,13 @@ class App(object):
         emails = db.execute('SELECT email FROM members')
 
         for mail in emails:
-            if email == mail:
+            if email == mail[0]:
                 return [{"error": "EMAIL_USED_ERROR"}]
 
         if password1 != password2:
             return [{"error": "PASSWORD_MISMATCH_ERROR"}]
 
-        db.execute('INSERT INTO members(mname,email,password,carplate,role,online,confirmed) VALUES (?,?,?,?,?,?,?)',(mname, email, password1, carplate, "Member", 0, 1))
+        db.execute('INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,rsid,online,confirmed) VALUES (?,?,?,?,?,?,?,?,?,?)',(mname, email, password1, carplate, "Member", -1, -1, -1, 0, 1))
 
         #send confirmation email
 
@@ -58,7 +62,7 @@ class App(object):
         db.commit()
         db.close()
 
-        #return [{"error": "OK", "pmid": pmid, "mname": mname, "email": email, "password": password1, "carplate": carplate, "role": "Member", "online": 0, "confirmed": 0}]
+        #return [{"error": "OK", "pmid": pmid, "mname": mname, "email": email, "password": password1, "carplate": carplate, "role": "Member", "mxpos": -1, "mypos": -1, "online": 0, "confirmed": 0}]
         # simplified for 1st delivery
         return [{"error": "OK", "mname": mname, "email": email}]
 
@@ -90,12 +94,19 @@ class App(object):
 
         db.execute('UPDATE members SET online=? WHERE email = ?',(1,email))
 
-        mname = db.execute('SELECT mname FROM members WHERE email=?',(email,)).fetchone()[0];
+        mname = db.execute('SELECT mname FROM members WHERE email=?',(email,)).fetchone()[0]
+
+	tmp_x = random.randint(1,1000)
+	tmp_y = random.randint(1,1000)
+
+	db.execute('UPDATE members SET mxpos=? AND mypos=? WHERE email=?',(tmp_x,tmp_y,email))
+
+	conf = db.execute('SELECT confirmed FROM members WHERE email=?'(email,)).fetchone()[0]
 
         db.commit()
         db.close()
 
-        # return [{"error": "OK", "email": email, "password": password,}]
+        # return [{"error": "OK", "mname": mname, "email": email, "password": password, "online": 1, "confirmed": conf}]
         # simplified for 1st delivery
         return [{"error": "OK", "mname": mname, "email": email}]
 
@@ -114,7 +125,7 @@ class App(object):
         db.commit()
         db.close()
 
-        return [{"error": "OK"}]
+        return [{"error": "OK", "email": email, "online": 0}]
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -131,7 +142,53 @@ class App(object):
 
 	db = sql.connect("database.db")
 
+	if recent == 1:
+	    tmp_rsid = db.execute('SELECT rsid FROM members WHERE email=?',(email,)).fetchone()[0]
 
+	    return [{"error": "OK", "sid": tmp_rsid}]
+
+	else:
+	    if sort_type == 0:
+		#sort by price
+
+		sorted_list = db.execute('SELECT psid,cpmin FROM spaces ORDER BY cpmin ASC').fetchall()
+		tmp_json = {"error": "OK", "email": email}
+    		sl_json = [] 
+
+		sl_json.append(tmp_json)
+
+		for element in sorted_list:
+        	    ap_json = {"sid": element[0], "cpmin": element[1]}
+		    sl_json.append(ap_json)
+
+		return sl_json
+
+	    elif sort_type == 1:
+		#sort by distance
+
+		mxpos = db.execute('SELECT mxpos FROM members WHERE email=?'(email,)).fetchone()
+		mypos = db.execute('SELECT mypos FROM members WHERE email=?'(email,)).fetchone()
+
+		sxposs = db.execute('SELECT sxpos FROM spaces').fetchall()
+		syposs = db.execute('SELECT sypos FROM spaces').fetchall()
+
+		sids = db.execute('SELECT psid FROM spaces').fetchall()
+
+		distances = []
+
+		index = 0
+		for space in sids:
+		    tmp_dis = math.sqrt( (mxpos-sxposs[index])*(mxpos-sxposs[index]) + (mypos-syposs[index])*(mypos-syposs[index]) )
+		    distances[str(sids[index])] = tmp_dis
+		    index += 1
+
+
+
+	    elif sort_type == 2:
+		#sort by rating
+	    else:
+		#error
+	
 
 
 
@@ -140,7 +197,7 @@ class App(object):
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def book(self,email,cc,valid,save,use_saved,sid):
+    def book(self,email,cc,valid,save,use_saved,sid,book_time):
         db = sql.connect("database.db")
 
         digit_count = 0
@@ -210,8 +267,11 @@ class App(object):
                 if not found:
                     db.execute('INSERT INTO creditinfo(mid,cc,valid) VALUES (?,?,?)',(tmp_mid,cc,valid))
 
-        #bank verifies cc here
-        #do the payment here
+        #bank verifies the cc here
+
+	to_pay = db.execute('SELECT cpmin FROM spaces WHERE psid=?',(sid,)) * book_time	
+
+        #bank does the payment here
 
         db.execute('UPDATE spaces SET free=? WHERE psid=?',(0,sid))
         db.execute('INSERT INTO bookings(mid,sid) VALUES (?,?)',(tmp_mid,sid))
