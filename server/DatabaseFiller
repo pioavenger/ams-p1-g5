@@ -1,23 +1,25 @@
-INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,rsid,online,confirmed) VALUES ("Antonio Costa","ac@hotmail.com","ac1234","1D-3A-C6","Member",10,67,2,0,1);
-INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,rsid,online,confirmed) VALUES ("Bruno Andrade","ba@hotmail.com","ba1234","SD-34-C7","Member",45,667,4,0,1);
-INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,rsid,online,confirmed) VALUES ("Carlos Monsante","cm@hotmail.com","cm1234","CM-31-HG","Member",1,552,1,0,1);
-INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,rsid,online,confirmed) VALUES ("Diogo Antunes","da@hotmail.com","da1234","2F-JK-CW","Member",998,558,5,0,1);
-INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,rsid,online,confirmed) VALUES ("Eder Cunha","ec@hotmail.com","ec1234","LP-94-8R","Member",134,643,6,0,1);
+INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,online,confirmed) VALUES ("Antonio Costa","ac@hotmail.com","ac1234","1D-3A-C6","Member",10,67,0,1);
+INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,online,confirmed) VALUES ("Bruno Andrade","ba@hotmail.com","ba1234","SD-34-C7","Member",45,667,0,1);
+INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,online,confirmed) VALUES ("Carlos Monsante","cm@hotmail.com","cm1234","CM-31-HG","Member",1,552,0,1);
+INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,online,confirmed) VALUES ("Diogo Antunes","da@hotmail.com","da1234","2F-JK-CW","Member",998,558,0,1);
+INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,online,confirmed) VALUES ("Eder Cunha","ec@hotmail.com","ec1234","LP-94-8R","Member",134,643,0,1);
 
 INSERT INTO providers(pname,ptotal,pfree) VALUES ("AVSpaces",3,2);
-INSERT INTO spaces(pid,sxpos,sypos,rating,free) VALUES (1,456,782,4,1);
-INSERT INTO spaces(pid,sxpos,sypos,rating,free) VALUES (1,456,231,7,0);
-INSERT INTO spaces(pid,sxpos,sypos,rating,free) VALUES (1,789,135,1,1);
+INSERT INTO spaces(pid,sxpos,sypos,cpmin,rating,nrating,free) VALUES (1,456,782,34,"4.5",4,1);
+INSERT INTO spaces(pid,sxpos,sypos,cpmin,rating,nrating,free) VALUES (1,456,231,1,"6.2",7,0);
+INSERT INTO spaces(pid,sxpos,sypos,cpmin,rating,nrating,free) VALUES (1,789,135,6,"3.4",1,1);
 
 INSERT INTO providers(pname,ptotal,pfree) VALUES ("PTSpaces",2,2);
-INSERT INTO spaces(pid,sxpos,sypos,rating,free) VALUES (2,12,236,3,1);
-INSERT INTO spaces(pid,sxpos,sypos,rating,free) VALUES (2,388,884,4,1);
+INSERT INTO spaces(pid,sxpos,sypos,cpmin,rating,nrating,free) VALUES (2,12,236,88,"7.9",3,1);
+INSERT INTO spaces(pid,sxpos,sypos,cpmin,rating,nrating,free) VALUES (2,388,884,1345,"9.9",4,1);
 
 INSERT INTO providers(pname,ptotal,pfree) VALUES ("LBSpaces",2,1);
-INSERT INTO spaces(pid,sxpos,sypos,rating,free) VALUES (2,567,986,1,1);
-INSERT INTO spaces(pid,sxpos,sypos,rating,free) VALUES (2,1,7,5,0);
+INSERT INTO spaces(pid,sxpos,sypos,cpmin,rating,nrating,free) VALUES (3,567,986,56,"4.5",1,1);
+INSERT INTO spaces(pid,sxpos,sypos,cpmin,rating,nrating,free) VALUES (3,1,7,3,"3.1",5,0);
 
-INSERT INTO bookings(mid,sid) VALUES (1,2);
-INSERT INTO bookings(mid,sid) VALUES (3,7);
+INSERT INTO bookings(mid,sid,terminated) VALUES (1,2,0);
+INSERT INTO bookings(mid,sid,terminated) VALUES (3,7,0);
+INSERT INTO bookings(mid,sid,terminated) VALUES (1,4,1);
+INSERT INTO bookings(mid,sid,terminated) VALUES (1,3,1);
 
 INSERT INTO creditinfo(mid,cc,valid) VALUES (3,"4562451248634562","04/20");

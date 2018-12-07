@@ -9,7 +9,6 @@ CREATE TABLE members(
 	role TEXT,
 	mxpos INTEGER,
 	mypos INTEGER,
-	rsid INTEGER,
 	online INTEGER,
 	confirmed INTEGER
 );
@@ -27,14 +26,16 @@ CREATE TABLE spaces(
 	sxpos INTEGER,
 	sypos INTEGER,
 	cpmin INTEGER,
-	rating INTEGER,
+	rating TEXT,
+	nrating INTEGER,
 	free INTEGER
 );
 
 CREATE TABLE bookings(
 	ptid INTEGER PRIMARY KEY AUTOINCREMENT,
 	mid INTEGER,
-	sid INTEGER
+	sid INTEGER,
+	terminated INTEGER
 );
 
 CREATE TABLE creditinfo(
