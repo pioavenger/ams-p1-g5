@@ -140,6 +140,9 @@ class App(object):
 
 	db = sql.connect("database.db")
 
+	#add online check here		<---------------------------------------
+	#add registry check here 	<---------------------------------------
+
 	mxpos = db.execute('SELECT mxpos FROM members WHERE email=?',(email,)).fetchone()[0]
 	mypos = db.execute('SELECT mypos FROM members WHERE email=?',(email,)).fetchone()[0]
 
@@ -238,6 +241,10 @@ class App(object):
     def book(self,email,cc,valid,save,use_saved,sid,book_time):
         db = sql.connect("database.db")
 
+	#add online check here		  <---------------------------------------
+	#add registry check here 	  <---------------------------------------
+	#add confirmed account check here <---------------------------------------
+
         digit_count = 0
         for number in cc:
             digit_count += 1
@@ -334,6 +341,51 @@ class App(object):
         db.close()
 
         return [{"error": "OK", "mid": tmp_mid, "cc": cc, "valid": valid, "ppid": pid_free[0], "pfree": pid_free[1]}]
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def confacc(self,email):
+	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def updatedatabase(self,email):
+	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def checkdatabase(self,email):
+	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def sendnotification(self,email):
+	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def togglemaintenance(self,email):
+	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def managelogs(self,email):
+	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def changeperms(self):
+	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def confsystem(self,email):
+	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def togglesystem(self,email):
+	pass
 
 config={
         '/': {
