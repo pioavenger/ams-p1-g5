@@ -15,7 +15,7 @@ class App(object):
     def signup(self,mname,password1,password2,email,carplate):
         mail_sections1 = email.split('@')
 
-        if len(mail_sections1) == 1 or mail_sections1[0] == "": 
+        if len(mail_sections1) != 2 or mail_sections1[0] == "" or mail_sections[1] == "": 
             return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
 
         mail_sections2 = mail_sections1[1].split('.')
@@ -44,16 +44,17 @@ class App(object):
 
         db = sql.connect("database.db")
 
-        emails = db.execute('SELECT email FROM members').fetchall()
+        emails = db.execute('SELECT * FROM members WHERE email=?',(email,)).fetchall()
 
-        for mail in emails:
-            if email == mail:
-                return [{"error": "EMAIL_USED_ERROR"}]
+        if len(emails) == 1:
+	    return [{"error": "EMAIL_USED_ERROR"}]
+	elif len(emails) > 1:
+	    return [{"error": "EMAIL_DATABASE_ERROR"}]
 
         if password1 != password2:
             return [{"error": "PASSWORD_MISMATCH_ERROR"}]
 
-        db.execute('INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,online,confirmed) VALUES (?,?,?,?,?,?,?,?,?)',(mname, email, password1, carplate, "Member", -1, -1, 0, 1))
+        db.execute('INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,online,confirmed) VALUES (?,?,?,?,?,?,?,?,?)',(mname, email, password1, carplate, "Member", -1, -1, 0, 0))
 
         #send confirmation email
 
@@ -69,33 +70,26 @@ class App(object):
     def signin(self,email,password):
         db = sql.connect("database.db")
 
-        emails = db.execute('SELECT email FROM members').fetchall()
+        m_info = db.execute('SELECT password,online FROM members WHERE email=?',(email,)).fetchall()
 
-        found = False
-        for mail in emails:
-            if email == mail:
-                found = True
-                break
+	if len(m_info) == 0:
+	    return [{"error": "INCORRECT_EMAIL_ERROR"}]
+	elif len(m_info) > 1:
+	    return [{"error": "EMAIL_DATABASE_ERROR"}]
 
-        if not found:
-            return [{"error": "USER_NOT_FOUND_ERROR"}]
-
-        log_pass = db.execute('SELECT password FROM members WHERE email=?', (email,)).fetchone()[0]
-
-        if password != log_pass:
+        if password != m_info[0][0]:
             return [{"error": "INCORRECT_PASSWORD_ERROR"}]
 
-        ison = db.execute('SELECT online FROM members WHERE email=?',(email,)).fetchone()[0]
-
-        if ison == 1:
+        if m_info[0][1] == 1:
             return [{"error": "MEMBER_ALREADY_ONLINE_ERROR"}]
+	elif m_info[0][1] != 0:
+	    return [{"error": "ISON_DATABASE_ERROR"}]
 
         db.execute('UPDATE members SET online=? WHERE email = ?',(1,email))
 
         mname = db.execute('SELECT mname FROM members WHERE email=?',(email,)).fetchone()[0]
 
-	tmp_x = random.randint(1,1000)
-	tmp_y = random.randint(1,1000)
+	tmp_x, tmp_y = randomxy()
 
 	db.execute('UPDATE members SET mxpos=? AND mypos=? WHERE email=?',(tmp_x,tmp_y,email))
 
@@ -104,19 +98,24 @@ class App(object):
         db.commit()
         db.close()
 
-        # return [{"error": "OK", "mname": mname, "email": email, "password": password, "online": 1, "confirmed": conf}]
-        # simplified for 1st delivery
-        return [{"error": "OK", "mname": mname, "email": email}]
+        return [{"error": "OK", "mname": mname, "email": email, "password": password, "mxpos": tmp_x, "mypos": tmp_y, "online": 1, "confirmed": conf}]
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def signout(self,email):
         db = sql.connect("database.db")
 
-        ison = db.execute('SELECT online FROM members WHERE email=?',(email,)).fetchone()[0]
+	m_info = db.execute('SELECT online FROM members WHERE email=?',(email,)).fetchall()
 
-        if ison == 0:
+	if len(m_info) == 0:
+	    return [{"error": "INCORRECT_EMAIL_ERROR"}]
+	elif len(m_info) > 1:
+	    return [{"error": "EMAIL_DATABASE_ERROR"}]
+
+        if m_info[0][0] == 0:
             return [{"error": "MEMBER_ALREADY_OFFLINE_ERROR"}]
+	elif m_info[0][0] != 1:
+	    return [{"error": "ISON_DATABASE_ERROR"}]
 
         db.execute('UPDATE members SET online=? WHERE email=?',(0,email))
 
@@ -140,11 +139,19 @@ class App(object):
 
 	db = sql.connect("database.db")
 
-	#add online check here		<---------------------------------------
-	#add registry check here 	<---------------------------------------
+	tmp_member = db.execute('SELECT online FROM members WHERE email=?',(email,)).fetchall()
+	
+	if len(tmp_member) == 0:
+	    return [{"error": "EMAIL_NOT_REGISTERED_ERROR"}]
+	elif len(tmp_member) > 1:
+	    return [{"error": "EMAIL_DATABASE_ERROR"}]
 
-	mxpos = db.execute('SELECT mxpos FROM members WHERE email=?',(email,)).fetchone()[0]
-	mypos = db.execute('SELECT mypos FROM members WHERE email=?',(email,)).fetchone()[0]
+	if tmp_member[0][0] == 0:
+	    return [{"error": "MEMBER_OFFLINE_ERROR"}]
+	elif tmp_member[0][0] != 1:
+	    return [{"error": "ISON_DATABASE_ERROR"}]
+
+	mxpos, mypos = db.execute('SELECT mxpos,mypos FROM members WHERE email=?',(email,)).fetchone()
 
 	if recent == 1:
 	    tmp_mid = db.execute('SELECT pmid FROM members WHERE email=?',(email,)).fetchone()[0]
@@ -241,18 +248,29 @@ class App(object):
     def book(self,email,cc,valid,save,use_saved,sid,book_time):
         db = sql.connect("database.db")
 
-	#add online check here		  <---------------------------------------
-	#add registry check here 	  <---------------------------------------
-	#add confirmed account check here <---------------------------------------
+	tmp_member = db.execute('SELECT online,confirmed FROM members WHERE email=?',(email,)).fetchall()
+	
+	if len(tmp_member) == 0:
+	    return [{"error": "EMAIL_NOT_REGISTERED_ERROR"}]
+	elif len(tmp_member) > 1:
+	    return [{"error": "EMAIL_DATABASE_ERROR"}]
 
-        digit_count = 0
-        for number in cc:
-            digit_count += 1
-            if not number.isdigit():
-                return [{"error": "WRONG_CREDITCARD_FORMAT_ERROR"}]
+	if tmp_member[0][0] == 0:
+	    return [{"error": "MEMBER_OFFLINE_ERROR"}]
+	elif tmp_member[0][0] != 1:
+	    return [{"error": "ISON_DATABASE_ERROR"}]
 
-        if digit_count != 16:
+	if tmp_member[0][1] == 0:
+	    return [{"error": "NOT_CONFIRMED_ERROR"}]
+	elif tmp_member[0][1] != 1:
+	    return [{"error": "CONF_DATABASE_ERROR"}]
+
+	if len(cc) != 16:
             return [{"error": "WRONG_CREDITCARD_FORMAT_ERROR"}]
+
+        for char in cc:
+            if not char.isdigit():
+                return [{"error": "WRONG_CREDITCARD_FORMAT_ERROR"}]
 
         valid_sections = valid.split('/')
 
@@ -280,7 +298,7 @@ class App(object):
                     db.execute('UPDATE spaces SET free=? WHERE psid=?',(0,sid))
                     db.execute('INSERT INTO bookings(mid,sid,terminated) VALUES (?,?,?)',(tmp_mid,sid,0))
 
-                    pid_free = db.execute('SELECT providers.ppid,providers.pfree FROM providers,bookings,spaces WHERE providers.ppid=spaces.pid AND spaces.psid=bookings.sid AND bookings.sid=? AND bookings.terminated=?',(sid,0)).fetchone()[0]
+                    pid_free = db.execute('SELECT providers.ppid,providers.pfree FROM providers,bookings,spaces WHERE providers.ppid=spaces.pid AND spaces.psid=bookings.sid AND bookings.sid=? AND bookings.terminated=?',(sid,0)).fetchone()
                     db.execute('UPDATE providers SET pfree=? WHERE ppid=?',(pid_free[1]-1,pid_free[0]))
 
                     db.commit()
@@ -297,7 +315,7 @@ class App(object):
 
             found = False
             for card in creditcards:
-                if cc == card:
+                if cc == card[0]:
                     found = True
                     break
 
@@ -306,7 +324,7 @@ class App(object):
 
                 found = False
                 for mail in emails:
-                    if email == mail:
+                    if email == mail[0]:
                         found = True
                         db.execute('UPDATE creditinfo SET cc=? AND valid=? WHERE mid=?',(cc,valid,tmp_mid))
                         break
@@ -334,7 +352,7 @@ class App(object):
         db.execute('UPDATE spaces SET free=? WHERE psid=?',(0,sid))
         db.execute('INSERT INTO bookings(mid,sid,terminated) VALUES (?,?,?)',(tmp_mid,sid,0))
 
-        pid_free = db.execute('SELECT providers.ppid,providers.pfree FROM providers,bookings,spaces WHERE providers.ppid=spaces.pid AND spaces.psid=transactions.sid AND transactions.sid=? AND bookings.terminated=?',(sid,0)).fetchone()[0]
+        pid_free = db.execute('SELECT providers.ppid,providers.pfree FROM providers,bookings,spaces WHERE providers.ppid=spaces.pid AND spaces.psid=transactions.sid AND transactions.sid=? AND bookings.terminated=?',(sid,0)).fetchone()
         db.execute('UPDATE providers SET pfree=? WHERE ppid=?',(pid_free[1]-1,pid_free[0]))
 
         db.commit()
@@ -345,7 +363,19 @@ class App(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def confacc(self,email):
-	pass
+	db = sql.connect("database.db")
+
+	tmp_member = db.execute('SELECT confirmed FROM members WHERE email=?',(email,)).fetchall()
+	
+	if len(tmp_member) == 0:
+	    return [{"error": "EMAIL_NOT_REGISTERED_ERROR"}]
+	elif len(tmp_member) > 1:
+	    return [{"error": "EMAIL_DATABASE_ERROR"}]
+
+	if tmp_member[0][0] == 0:
+	    return [{"error": "NOT_CONFIRMED_ERROR"}]
+	elif tmp_member[0][0] != 1:
+	    return [{"error": "CONF_DATABASE_ERROR"}]
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -386,6 +416,24 @@ class App(object):
     @cherrypy.tools.json_out()
     def togglesystem(self,email):
 	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def api_sendconfmail(self,email):
+	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def api_bankverifycc(self,cc)
+	pass
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def api_bankpayment(self,cc,valid)
+	pass
+
+    def randomxy():
+	return (random.randint(1,1000),random.randint(1,1000))
 
 config={
         '/': {
