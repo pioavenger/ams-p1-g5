@@ -1,10 +1,11 @@
-package com.ams.cityparking;
+package com.ams.cityparking.NetWorkTools;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.ams.cityparking.LoginActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,14 +14,14 @@ import org.json.JSONObject;
 public class SignupNetWorkTask extends NetWorkTask {
     private AppCompatActivity activity;
 
-    protected SignupNetWorkTask(String url, AppCompatActivity curr_a) {
+    public SignupNetWorkTask(String url, AppCompatActivity curr_a) {
         // rooturl + url
         super((curr_a.getSharedPreferences("url_prefs", curr_a.MODE_PRIVATE).getString("url", "")+url));
         this.activity = curr_a;
     }
 
     @Override
-    protected void onPostExecute(Boolean result) {
+    public void onPostExecute(Boolean result) {
         // cant connect
         Toast toast;
         if(!result){

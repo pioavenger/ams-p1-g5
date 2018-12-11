@@ -8,12 +8,21 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ams.cityparking.NetWorkTools.SignupNetWorkTask;
+
 public class SignupActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public void signin(View view) {

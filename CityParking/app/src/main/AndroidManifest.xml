@@ -28,10 +28,6 @@
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".BrowseActivity"
-            android:label="@string/title_activity_browse"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".SignupActivity"
             android:label="Signup"
             android:theme="@style/AppTheme" />

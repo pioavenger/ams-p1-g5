@@ -73,7 +73,7 @@ class App(object):
 
         found = False
         for mail in emails:
-            if email == mail:
+            if email == mail[0]:
                 found = True
                 break
 
@@ -98,8 +98,7 @@ class App(object):
 	tmp_y = random.randint(1,1000)
 
 	db.execute('UPDATE members SET mxpos=? AND mypos=? WHERE email=?',(tmp_x,tmp_y,email))
-
-	conf = db.execute('SELECT confirmed FROM members WHERE email=?'(email,)).fetchone()[0]
+	conf = db.execute('SELECT confirmed FROM members WHERE email=?',(email,)).fetchone()[0]
 
         db.commit()
         db.close()
@@ -128,7 +127,7 @@ class App(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def browse(self,email,filter_type,recent):
-
+        filter_type = int(filter_type)
 	# Sort types:
 	# 0 - Price     - not yet implemented
 	# 1 - Distance	- not yet implemented
@@ -157,16 +156,20 @@ class App(object):
 		sp_info = db.execute('SELECT sxpos,sypos,cpmin,rating FROM spaces WHERE psid=?',(space[0],)).fetchone()
 
 		tmp_dis = math.sqrt( (mxpos-sp_info[0])*(mxpos-sp_info[0]) + (mypos-sp_info[1])*(mypos-sp_info[1]) )
-
+                tmp_dis = int(tmp_dis)
 		ap_json = {"sid": space[0], "rating": float(sp_info[3]), "cpmin": sp_info[2], "distance": tmp_dis}
 		sl_json.append(ap_json)
 
 	    sl_json.reverse()
-	    sl_json.append(tmp_json)
+            
+            response = {}
+            response["sl"] = sl_json
+            response["email"] = tmp_json["email"]
+            response["error"] = tmp_json["error"]
 
             db.close()
 
-            return sl_json
+            return response
 
 	else:
 	    if filter_type == 0:
@@ -178,15 +181,18 @@ class App(object):
 
 		for space in sp_info:
         	    tmp_dis = math.sqrt( (mxpos-space[1])*(mxpos-space[1]) + (mypos-space[2])*(mypos-space[2]) )
-
+                    tmp_dis = int(tmp_dis)
 		    ap_json = {"sid": space[0], "rating": float(space[4]), "cpmin": space[3], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
-		sl_json.append(tmp_json)
+                response = {}
+                response["sl"] = sl_json
+                response["email"] = tmp_json["email"]
+                response["error"] = tmp_json["error"]         
+		
+                db.close()
 
-		db.close()
-
-		return sl_json
+		return response
 
 	    elif filter_type == 1:
 		#filter by distance
@@ -198,16 +204,20 @@ class App(object):
 
 		for space in sp_info:
 		    tmp_dis = math.sqrt( (mxpos-space[1])*(mxpos-space[1]) + (mypos-space[2])*(mypos-space[2]) )
-
+                    tmp_dis = int(tmp_dis)
 		    ap_json = {"sid": space[0], "rating": float(space[4]), "cpmin": space[3], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
 		sorted_distances = sorted(sl_json, key=lambda k: k['distance']) 
-		sorted_distances.append(tmp_json)
+		
+                response = {}
+                response["sl"] = sorted_distances
+                response["email"] = tmp_json["email"]
+                response["error"] = tmp_json["error"]
 
 		db.close()
 		
-		return sorted_distances
+		return response
 
 	    elif filter_type == 2:
 		#filter by rating
@@ -219,18 +229,21 @@ class App(object):
 
 	        for space in sp_info:
 		    tmp_dis = math.sqrt( (mxpos-space[1])*(mxpos-space[1]) + (mypos-space[2])*(mypos-space[2]) )
-
+                    tmp_dis = int(tmp_dis)
        		    ap_json = {"sid": space[0], "rating": float(space[4]), "cpmin": space[3], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
 		sorted_ratings = sorted(sl_json, key=lambda k: k['rating'])
 		sorted_ratings.reverse()
-
-	        sorted_ratings.append(tmp_json)
+                
+                response = {}
+                response["sl"] = sorted_ratings
+                response["email"] = tmp_json["email"]
+                response["error"] = tmp_json["error"]
 
 		db.close()
 
-                return sorted_ratings
+                return response
 
 	    else:
 		db.close()

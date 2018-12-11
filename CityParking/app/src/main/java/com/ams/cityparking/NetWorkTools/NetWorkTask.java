@@ -1,4 +1,4 @@
-package com.ams.cityparking;
+package com.ams.cityparking.NetWorkTools;
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -12,7 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.io.IOException;
 
-class NetWorkTask extends AsyncTask<String,Void,Boolean>{
+public class NetWorkTask extends AsyncTask<String,Void,Boolean>{
     protected byte[] payload;
     protected int payloadSize = 0;
     private String urlstr;
