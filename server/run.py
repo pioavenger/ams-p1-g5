@@ -160,11 +160,12 @@ class App(object):
     	    sl_json = []
 
 	    for space in recent_list:
-		sp_info = db.execute('SELECT sxpos,sypos,cpmin,rating FROM spaces WHERE psid=?',(space[0],)).fetchone()
+		sp_info = db.execute('SELECT pid,sxpos,sypos,cpmin,rating FROM spaces WHERE psid=?',(space[0],)).fetchone()
 
-		tmp_dis = math.sqrt( (mxpos-sp_info[0])*(mxpos-sp_info[0]) + (mypos-sp_info[1])*(mypos-sp_info[1]) )
+		tmp_dis = math.sqrt( (mxpos-sp_info[1])*(mxpos-sp_info[1]) + (mypos-sp_info[2])*(mypos-sp_info[2]) )
                 tmp_dis = int(tmp_dis)
-		ap_json = {"sid": space[0], "rating": float(sp_info[3]), "cpmin": sp_info[2], "distance": tmp_dis}
+		prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[0],))
+		ap_json = {"sid": space[0], "provider": prov,"rating": float(sp_info[4]), "cpmin": sp_info[3], "distance": tmp_dis}
 		sl_json.append(ap_json)
 
 	    sl_json.reverse()
@@ -182,14 +183,15 @@ class App(object):
 	    if filter_type == 0:
 		#filter by price
 
-		sp_info = db.execute('SELECT psid,sxpos,sypos,cpmin,rating FROM spaces ORDER BY cpmin ASC').fetchall()
+		sp_info = db.execute('SELECT psid,pid,sxpos,sypos,cpmin,rating FROM spaces ORDER BY cpmin ASC').fetchall()
 		tmp_json = {"error": "OK", "email": email}
     		sl_json = []
 
 		for space in sp_info:
-        	    tmp_dis = math.sqrt( (mxpos-space[1])*(mxpos-space[1]) + (mypos-space[2])*(mypos-space[2]) )
+        	    tmp_dis = math.sqrt( (mxpos-space[2])*(mxpos-space[2]) + (mypos-space[3])*(mypos-space[3]) )
                     tmp_dis = int(tmp_dis)
-		    ap_json = {"sid": space[0], "rating": float(space[4]), "cpmin": space[3], "distance": tmp_dis}
+		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],))
+		    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
                 response = {}
@@ -204,15 +206,16 @@ class App(object):
 	    elif filter_type == 1:
 		#filter by distance
 
-		sp_info = db.execute('SELECT psid,sxpos,sypos,cpmin,rating FROM spaces').fetchall()
+		sp_info = db.execute('SELECT pid,psid,sxpos,sypos,cpmin,rating FROM spaces').fetchall()
 
 		sl_json = []
 		tmp_json = {"error": "OK", "email": email}
 
 		for space in sp_info:
-		    tmp_dis = math.sqrt( (mxpos-space[1])*(mxpos-space[1]) + (mypos-space[2])*(mypos-space[2]) )
+		    tmp_dis = math.sqrt( (mxpos-space[2])*(mxpos-space[2]) + (mypos-space[3])*(mypos-space[3]) )
                     tmp_dis = int(tmp_dis)
-		    ap_json = {"sid": space[0], "rating": float(space[4]), "cpmin": space[3], "distance": tmp_dis}
+		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],))
+		    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
 		sorted_distances = sorted(sl_json, key=lambda k: k['distance'])
@@ -229,15 +232,16 @@ class App(object):
 	    elif filter_type == 2:
 		#filter by rating
 
-		sp_info = db.execute('SELECT psid,sxpos,sypos,cpmin,rating FROM spaces').fetchall()
+		sp_info = db.execute('SELECT psid,pid,sxpos,sypos,cpmin,rating FROM spaces').fetchall()
 
 		tmp_json = {"error": "OK", "email": email}
     	        sl_json = []
 
 	        for space in sp_info:
-		    tmp_dis = math.sqrt( (mxpos-space[1])*(mxpos-space[1]) + (mypos-space[2])*(mypos-space[2]) )
+		    tmp_dis = math.sqrt( (mxpos-space[2])*(mxpos-space[2]) + (mypos-space[3])*(mypos-space[3]) )
                     tmp_dis = int(tmp_dis)
-       		    ap_json = {"sid": space[0], "rating": float(space[4]), "cpmin": space[3], "distance": tmp_dis}
+		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],))
+       		    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
 		sorted_ratings = sorted(sl_json, key=lambda k: k['rating'])
