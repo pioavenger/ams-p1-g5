@@ -20,27 +20,22 @@ class App(object):
 
         mail_sections2 = mail_sections1[1].split('.')
 
-        for char in mail_sections2[0]:
-            if not char.isalpha():
-                return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
+        if not mail_sections2[0].isalpha():
+            return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
 
-        for char in mail_sections2[1]:
-            if not char.isalpha():
-                return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
+        if not mail_sections2[0].isalpha():
+            return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
 
         carplate_sections = carplate.split('-')
 
-        for char in carplate_sections[0]:
-            if not char.isalnum():
-                return [{"error": "WRONG_CARPLATE_FORMAT_ERROR"}]
+        if not carplate_sections[0].isalnum():
+            return [{"error": "WRONG_CARPLATE_FORMAT_ERROR"}]
 
-        for char in carplate_sections[1]:
-            if not char.isalnum():
-                return [{"error": "WRONG_CARPLATE_FORMAT_ERROR"}]
+        if not carplate_sections[1].isalnum():
+            return [{"error": "WRONG_CARPLATE_FORMAT_ERROR"}]
 
-        for char in carplate_sections[2]:
-            if not char.isalnum():
-                return [{"error": "WRONG_CARPLATE_FORMAT_ERROR"}]
+        if not carplate_sections[2].isalnum():
+            return [{"error": "WRONG_CARPLATE_FORMAT_ERROR"}]
 
         db = sql.connect("database.db")
 
@@ -56,7 +51,7 @@ class App(object):
 
         db.execute('INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,online,confirmed) VALUES (?,?,?,?,?,?,?,?,?)',(mname, email, password1, carplate, "Member", -1, -1, 0, 0))
 
-        #send confirmation email
+	api_confacc(email)
 
         pmid = db.execute('SELECT pmid FROM members WHERE email=?',(email,)).fetchone()[0]
 
@@ -104,7 +99,7 @@ class App(object):
     def signout(self,email):
         db = sql.connect("database.db")
 
-	m_info = db.execute('SELECT online FROM members WHERE email=?',(email,)).fetchall()
+	m_info = db.execute('select online from members where email=?',(email,)).fetchall()
 
 	if len(m_info) == 0:
 	    return [{"error": "INCORRECT_EMAIL_ERROR"}]
@@ -128,9 +123,9 @@ class App(object):
     def browse(self,email,filter_type,recent):
         filter_type = int(filter_type)
 	# Sort types:
-	# 0 - Price     - not yet implemented
-	# 1 - Distance	- not yet implemented
-	# 2 - Rating    - not yet implemented
+	# 0 - Price
+	# 1 - Distance
+	# 2 - Rating
 
 	# Recent:
 	# 0 - no
@@ -150,9 +145,23 @@ class App(object):
 	elif tmp_member[0][0] != 1:
 	    return [{"error": "ISON_DATABASE_ERROR"}]
 
+	#if not str(filter_type).isnumeric():
+	#    return [{"error": "WRONG_FILTER_ERROR"}]
+
+	if int(filter_type) < 0 or int(filter_type) > 2:
+	    return [{"error": "WRONG_FILTER_ERROR"}]
+
+	#if not str(recent).isnumeric():
+	#    return [{"error": "WRONG_RECENT_ERROR"}]
+
+	#if int(recent) != 0 or int(recent) != 1:
+	#    return [{"error": "WRONG_RECENT_ERROR"}]
+
 	mxpos, mypos = db.execute('SELECT mxpos,mypos FROM members WHERE email=?',(email,)).fetchone()
 
-	if recent == 1:
+	if int(recent) == 1:
+	    #sort by recent
+
 	    tmp_mid = db.execute('SELECT pmid FROM members WHERE email=?',(email,)).fetchone()[0]
 	    recent_list = db.execute('SELECT sid FROM bookings WHERE terminated=? AND mid=?',(1,tmp_mid)).fetchall()
 
@@ -164,7 +173,7 @@ class App(object):
 
 		tmp_dis = math.sqrt( (mxpos-sp_info[1])*(mxpos-sp_info[1]) + (mypos-sp_info[2])*(mypos-sp_info[2]) )
                 tmp_dis = int(tmp_dis)
-		prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[0],))
+		prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[0],)).fetchone()[0]
 		ap_json = {"sid": space[0], "provider": prov,"rating": float(sp_info[4]), "cpmin": sp_info[3], "distance": tmp_dis}
 		sl_json.append(ap_json)
 
@@ -180,7 +189,7 @@ class App(object):
             return response
 
 	else:
-	    if filter_type == 0:
+	    if int(filter_type) == 0:
 		#filter by price
 
 		sp_info = db.execute('SELECT psid,pid,sxpos,sypos,cpmin,rating FROM spaces ORDER BY cpmin ASC').fetchall()
@@ -190,9 +199,8 @@ class App(object):
 		for space in sp_info:
         	    tmp_dis = math.sqrt( (mxpos-space[2])*(mxpos-space[2]) + (mypos-space[3])*(mypos-space[3]) )
                     tmp_dis = int(tmp_dis)
-		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],))
-		    prov = prov.fetchone()[0]
-                    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
+		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],)).fetchone()[0]
+		    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
                 response = {}
@@ -204,7 +212,7 @@ class App(object):
 
 		return response
 
-	    elif filter_type == 1:
+	    elif int(filter_type) == 1:
 		#filter by distance
 
 		sp_info = db.execute('SELECT psid,pid,sxpos,sypos,cpmin,rating FROM spaces').fetchall()
@@ -215,9 +223,8 @@ class App(object):
 		for space in sp_info:
 		    tmp_dis = math.sqrt( (mxpos-space[2])*(mxpos-space[2]) + (mypos-space[3])*(mypos-space[3]) )
                     tmp_dis = int(tmp_dis)
-		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],))
-                    prov = prov.fetchone()[0]
-                    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
+		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],)).fetchone()[0]
+		    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
 		sorted_distances = sorted(sl_json, key=lambda k: k['distance'])
@@ -231,7 +238,7 @@ class App(object):
 
 		return response
 
-	    elif filter_type == 2:
+	    elif int(filter_type) == 2:
 		#filter by rating
 
 		sp_info = db.execute('SELECT psid,pid,sxpos,sypos,cpmin,rating FROM spaces').fetchall()
@@ -242,9 +249,8 @@ class App(object):
 	        for space in sp_info:
 		    tmp_dis = math.sqrt( (mxpos-space[2])*(mxpos-space[2]) + (mypos-space[3])*(mypos-space[3]) )
                     tmp_dis = int(tmp_dis)
-		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],))
-       		    prov = prov.fetchone()[0]
-                    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
+		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],)).fetchone()[0]
+       		    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
 		sorted_ratings = sorted(sl_json, key=lambda k: k['rating'])
@@ -258,10 +264,6 @@ class App(object):
 		db.close()
 
                 return response
-
-	    else:
-		db.close()
-		return [{"error": "WRONG_FILTER_ERROR"}]
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -288,26 +290,47 @@ class App(object):
 	if len(cc) != 16:
             return [{"error": "WRONG_CREDITCARD_FORMAT_ERROR"}]
 
-        for char in cc:
-            if not char.isdigit():
-                return [{"error": "WRONG_CREDITCARD_FORMAT_ERROR"}]
+        if not cc.isnumeric():
+            return [{"error": "WRONG_CREDITCARD_FORMAT_ERROR"}]
 
         valid_sections = valid.split('/')
 
-        for number in valid_sections[0]:
-            if not number.isdigit():
-                return [{"error": "WRONG_VALIDITY_FORMAT_ERROR"}]
+        if not valid_sections[0].isnumeric():
+            return [{"error": "WRONG_VALIDITY_FORMAT_ERROR"}]
 
-        for number in valid_sections[1]:
-            if not number.isdigit():
-                return [{"error": "WRONG_VALIDITY_FORMAT_ERROR"}]
+        if not valid_sections[1].isnumeric():
+            return [{"error": "WRONG_VALIDITY_FORMAT_ERROR"}]
 
         if int(valid_sections[0]) > 12 or int(valid_sections[0]) < 1:
             return [{"error": "WRONG_VALIDITY_FORMAT_ERROR"}]
 
+	if not str(save).isnumeric():
+	    return [{"error": "WRONG_SAVE_ERROR"}]
+
+	if not str(use_saved).isnumeric():
+	    return [{"error": "WRONG_USESAVED_ERROR"}]
+
+	if int(save) != 0 and int(save) != 1:
+	    return [{"error": "WRONG_SAVE_ERROR"}]
+
+	if int(use_saved) != 0 and int(use_saved) != 1:
+	    return [{"error": "WRONG_USESAVED_ERROR"}]
+
+	if not str(book_time).isnumeric():
+	    return [{"error": "WRONG_BOOKTIME_ERROR"}]
+
+	if int(book_time) < 0:
+	    return [{"error": "WRONG_BOOKTIME_ERROR"}]
+
+	if not str(sid).isnumeric():
+	    return [{"error": "WRONG_SID_ERROR"}]
+
+	if int(sid) < 0:
+	    return [{"error": "WRONG_SID_ERROR"}]
+
         tmp_mid = db.execute('SELECT pmid FROM members WHERE email=?',email).fetchone()[0]
 
-        if use_saved:
+        if int(use_saved):
             saved_info = db.execute('SELECT mid,cc,valid FROM creditinfo').fetchall()
 
             for member in saved_info:
@@ -315,10 +338,10 @@ class App(object):
                     #bank verifies cc here
                     #do the payment here
 
-                    db.execute('UPDATE spaces SET free=? WHERE psid=?',(0,sid))
-                    db.execute('INSERT INTO bookings(mid,sid,terminated) VALUES (?,?,?)',(tmp_mid,sid,0))
+                    db.execute('UPDATE spaces SET free=? WHERE psid=?',(0,int(sid)))
+                    db.execute('INSERT INTO bookings(mid,sid,terminated) VALUES (?,?,?)',(tmp_mid,int(sid),0))
 
-                    pid_free = db.execute('SELECT providers.ppid,providers.pfree FROM providers,bookings,spaces WHERE providers.ppid=spaces.pid AND spaces.psid=bookings.sid AND bookings.sid=? AND bookings.terminated=?',(sid,0)).fetchone()
+                    pid_free = db.execute('SELECT providers.ppid,providers.pfree FROM providers,bookings,spaces WHERE providers.ppid=spaces.pid AND spaces.psid=bookings.sid AND bookings.sid=? AND bookings.terminated=?',(int(sid),0)).fetchone()
                     db.execute('UPDATE providers SET pfree=? WHERE ppid=?',(pid_free[1]-1,pid_free[0]))
 
                     db.commit()
@@ -330,7 +353,7 @@ class App(object):
 
 	    return [{"error": "NO_SAVED_CREDITCARD_ERROR"}]
 
-        if save:
+        if int(save):
             creditcards = db.execute('SELECT cc FROM creditinfo').fetchall()
 
             found = False
@@ -365,14 +388,14 @@ class App(object):
 
         #bank verifies the cc here
 
-	to_pay = db.execute('SELECT cpmin FROM spaces WHERE psid=?',(sid,)).fetchone()[0] * book_time
+	to_pay = db.execute('SELECT cpmin FROM spaces WHERE psid=?',(int(sid),)).fetchone()[0] * int(book_time)
 
         #bank does the payment here
 
-        db.execute('UPDATE spaces SET free=? WHERE psid=?',(0,sid))
-        db.execute('INSERT INTO bookings(mid,sid,terminated) VALUES (?,?,?)',(tmp_mid,sid,0))
+        db.execute('UPDATE spaces SET free=? WHERE psid=?',(0,int(sid)))
+        db.execute('INSERT INTO bookings(mid,sid,terminated) VALUES (?,?,?)',(tmp_mid,int(sid),0))
 
-        pid_free = db.execute('SELECT providers.ppid,providers.pfree FROM providers,bookings,spaces WHERE providers.ppid=spaces.pid AND spaces.psid=transactions.sid AND transactions.sid=? AND bookings.terminated=?',(sid,0)).fetchone()
+        pid_free = db.execute('SELECT providers.ppid,providers.pfree FROM providers,bookings,spaces WHERE providers.ppid=spaces.pid AND spaces.psid=transactions.sid AND transactions.sid=? AND bookings.terminated=?',(int(sid),0)).fetchone()
         db.execute('UPDATE providers SET pfree=? WHERE ppid=?',(pid_free[1]-1,pid_free[0]))
 
         db.commit()
@@ -382,25 +405,103 @@ class App(object):
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
-    def confacc(self,email):
+    def updatedatabase(self,email,sid,field,data):
+
+	# Fields:
+	# 0 - sxpos
+	# 1 - sypos
+	# 2 - cpmin
+	# 3 - free
+
 	db = sql.connect("database.db")
 
-	tmp_member = db.execute('SELECT confirmed FROM members WHERE email=?',(email,)).fetchall()
+	tmp_prov = db.execute('SELECT role,confirmed FROM members WHERE email=?',(email,)).fetchall()
 
-	if len(tmp_member) == 0:
+	if len(tmp_prov) == 0:
 	    return [{"error": "EMAIL_NOT_REGISTERED_ERROR"}]
-	elif len(tmp_member) > 1:
+	elif len(tmp_prov) > 1:
 	    return [{"error": "EMAIL_DATABASE_ERROR"}]
 
-	if tmp_member[0][0] == 0:
+	if tmp_prov[0][1] == 0:
 	    return [{"error": "NOT_CONFIRMED_ERROR"}]
-	elif tmp_member[0][0] != 1:
+	elif tmp_prov[0][1] != 1:
 	    return [{"error": "CONF_DATABASE_ERROR"}]
 
-    @cherrypy.expose
-    @cherrypy.tools.json_out()
-    def updatedatabase(self,email):
-	pass
+	if tmp_prov[0][0] != "Provider":
+	    return [{"error": "PERMISSION_DENIED_ERROR"}]
+
+	if not str(field).isnumeric():
+	    return [{"error": "WRONG_FIELD_ERROR"}]
+
+	if int(field) < 0 or int(field) > 3:
+	    return [{"error": "WRONG_FIELD_ERROR"}]
+
+	if not str(sid).isnumeric():
+	    return [{"error": "WRONG_SID_ERROR"}]
+
+	if int(sid) < 0:
+	    return [{"error": "WRONG_SID_ERROR"}]
+
+	if not str(data).isnumeric():
+	    return [{"error": "WRONG_DATA_ERROR"}]
+
+	if int(data) < 0:
+	    return [{"error": "WRONG_DATA_ERROR"}]
+
+	if int(field) == 0:
+	    #update sxpos
+
+	    try:
+		int(data)
+	    except ValueError:
+		return [{"error": "WRONG_DATA_ERROR"}]
+
+	    db.execute('UPDATE spaces SET sxpos=? WHERE sid=?',(int(data),int(sid)))
+	    db.commit()
+	    db.close()
+	    return [{"error": "OK", "email": email, "sid": sid, "sxpos": int(data)}]
+
+	elif int(field) == 1:
+	    #update sypos
+
+	    try:
+		int(data)
+	    except ValueError:
+		return [{"error": "WRONG_DATA_ERROR"}]
+
+	    db.execute('UPDATE spaces SET sypos=? WHERE sid=?',(int(data),int(sid)))
+	    db.commit()
+	    db.close()
+	    return [{"error": "OK", "email": email, "sid": sid, "sypos": int(data)}]
+
+	elif int(field) == 2:
+	    #update cpmin
+
+	    try:
+		int(data)
+	    except ValueError:
+		return [{"error": "WRONG_DATA_ERROR"}]
+
+	    db.execute('UPDATE spaces SET cpmin=? WHERE sid=?',(int(data),int(sid)))
+	    db.commit()
+	    db.close()
+	    return [{"error": "OK", "email": email, "sid": sid, "cpmin": int(data)}]
+
+	elif int(field) == 3:
+	    #update free
+
+	    try:
+		int(data)
+	    except ValueError:
+		return [{"error": "WRONG_DATA_ERROR"}]
+
+	    if int(free) != 0 and int(free) != 1:
+		return [{"error": "WRONG_DATA_ERROR"}]
+
+	    db.execute('UPDATE spaces SET free=? WHERE sid=?',(int(data),int(sid)))
+	    db.commit()
+	    db.close()
+	    return [{"error": "OK", "email": email, "sid": sid, "free": int(data)}]
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -451,6 +552,25 @@ class App(object):
     @cherrypy.tools.json_out()
     def api_bankpayment(self,cc,valid):
 	pass
+
+    def api_confacc(email):
+	db = sql.connect("database.db")
+
+	tmp_member = db.execute('SELECT confirmed FROM members WHERE email=?',(email,)).fetchall()
+
+	if len(tmp_member) == 0:
+	    return [{"error": "EMAIL_NOT_REGISTERED_ERROR"}]
+	elif len(tmp_member) > 1:
+	    return [{"error": "EMAIL_DATABASE_ERROR"}]
+
+	if tmp_member[0][0] == 1:
+	    return [{"error": "ALREADY_CONFIRMED_ERROR"}]
+	elif tmp_member[0][0] != 0:
+	    return [{"error": "CONF_DATABASE_ERROR"}]
+
+	db.execute('UPDATE members SET confirmed=? WHERE email=?',(1,email))
+	db.commit()
+	db.close()
 
 def randomxy():
     return (random.randint(1,1000),random.randint(1,1000))

@@ -7,6 +7,14 @@ import random
 def randomxy():
 	return (random.randint(1,1000),random.randint(1,1000))
 
+def inttest(str):
+	try:
+		int(str)
+	except ValueError:
+		return [{"error": "NOT_AN_INT_ERROR"}]
+
+	return [{"error": "OK"}]
+
 
 def test():
     	db = sql.connect('database.db')
@@ -152,9 +160,24 @@ def test():
 	#print(mxpos)
 	#print(mypos)	
 
-	testingl = db.execute('SELECT online FROM members WHERE pmid=?',(1,)).fetchall()
-	print(testingl[0])
-	print(testingl[0][0])
+	#testingl = db.execute('SELECT online FROM members WHERE pmid=?',(1,)).fetchall()
+	#print(testingl[0])
+	#print(testingl[0][0])
+
+	#numb = 5
+	#varb = 1
+	#if int(varb):
+	#	print(numb)
+	#	print(int(numb))
 	
+	str1 = "5"
+	str2 = "5.4"
+	str3 = "4.5.4"
+	str4 = "hi"
+
+	print(inttest(str1))
+	print(inttest(str2))
+	print(inttest(str3))
+	print(inttest(str4))
 
 test()
