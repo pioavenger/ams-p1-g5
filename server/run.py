@@ -15,7 +15,7 @@ class App(object):
     def signup(self,mname,password1,password2,email,carplate):
         mail_sections1 = email.split('@')
 
-        if len(mail_sections1) != 2 or mail_sections1[0] == "" or mail_sections[1] == "":
+        if len(mail_sections1) != 2 or mail_sections1[0] == "" or mail_sections1[1] == "":
             return [{"error": "WRONG_EMAIL_FORMAT_ERROR"}]
 
         mail_sections2 = mail_sections1[1].split('.')
@@ -191,7 +191,8 @@ class App(object):
         	    tmp_dis = math.sqrt( (mxpos-space[2])*(mxpos-space[2]) + (mypos-space[3])*(mypos-space[3]) )
                     tmp_dis = int(tmp_dis)
 		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],))
-		    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
+		    prov = prov.fetchone()[0]
+                    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
                 response = {}
@@ -206,7 +207,7 @@ class App(object):
 	    elif filter_type == 1:
 		#filter by distance
 
-		sp_info = db.execute('SELECT pid,psid,sxpos,sypos,cpmin,rating FROM spaces').fetchall()
+		sp_info = db.execute('SELECT psid,pid,sxpos,sypos,cpmin,rating FROM spaces').fetchall()
 
 		sl_json = []
 		tmp_json = {"error": "OK", "email": email}
@@ -215,7 +216,8 @@ class App(object):
 		    tmp_dis = math.sqrt( (mxpos-space[2])*(mxpos-space[2]) + (mypos-space[3])*(mypos-space[3]) )
                     tmp_dis = int(tmp_dis)
 		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],))
-		    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
+                    prov = prov.fetchone()[0]
+                    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
 		sorted_distances = sorted(sl_json, key=lambda k: k['distance'])
@@ -241,7 +243,8 @@ class App(object):
 		    tmp_dis = math.sqrt( (mxpos-space[2])*(mxpos-space[2]) + (mypos-space[3])*(mypos-space[3]) )
                     tmp_dis = int(tmp_dis)
 		    prov = db.execute('SELECT providers.pname FROM providers,spaces WHERE providers.ppid=spaces.pid AND spaces.pid=?',(space[1],))
-       		    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
+       		    prov = prov.fetchone()[0]
+                    ap_json = {"sid": space[0], "provider": prov, "rating": float(space[5]), "cpmin": space[4], "distance": tmp_dis}
 		    sl_json.append(ap_json)
 
 		sorted_ratings = sorted(sl_json, key=lambda k: k['rating'])
@@ -449,8 +452,8 @@ class App(object):
     def api_bankpayment(self,cc,valid):
 	pass
 
-    def randomxy():
-	return (random.randint(1,1000),random.randint(1,1000))
+def randomxy():
+    return (random.randint(1,1000),random.randint(1,1000))
 
 config={
         '/': {

@@ -54,12 +54,12 @@ public class BrowseNetWorkTask extends NetWorkTask {
                     JSONObject parkingProvider = sl.getJSONObject(i);
                     Log.d("Browse",parkingProvider.toString());
                     // add parking slot info
-                    //String name = parkingProvider.getString("name");
+                    String name = parkingProvider.getString("provider");
                     String rating = parkingProvider.getString("rating");
                     String cpmin = parkingProvider.getString("cpmin");
                     String distance = parkingProvider.getString("distance");
                     String sid = parkingProvider.getString("sid");
-                    ParkingSlot ps = new ParkingSlot(rating,cpmin,distance,sid);
+                    ParkingSlot ps = new ParkingSlot(name,rating,cpmin,distance,sid);
                     parkingSlotList.add(ps);
                 }
                 fragment.makeAdapter(parkingSlotList);

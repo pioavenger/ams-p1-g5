@@ -44,7 +44,7 @@ public class BrowseFragment extends Fragment {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("filter_type", "1"); // distance
         editor.commit();
-        
+
         updateList();
     }
 

@@ -11,12 +11,14 @@ import java.util.ArrayList;
 
 public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ParkingSlotViewHolder> {
     public static class  ParkingSlotViewHolder extends RecyclerView.ViewHolder{
+        public TextView name;
         public TextView rating;
         public TextView cpmin;
         public TextView distance;
 
         public ParkingSlotViewHolder(@NonNull View itemView) {
             super(itemView);
+            name = itemView.findViewById(R.id.name);
             rating = itemView.findViewById(R.id.rating);
             cpmin = itemView.findViewById(R.id.cpmin);
             distance = itemView.findViewById(R.id.distance);
@@ -39,6 +41,7 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.ParkingSlo
     @Override
     public void onBindViewHolder(@NonNull ParkingSlotViewHolder psViewHolder, int i) {
         ParkingSlot curr_item = parkingSlotList.get(i);
+        psViewHolder.name.setText(curr_item.getName());
         psViewHolder.rating.setText(curr_item.getRating());
         psViewHolder.cpmin.append(curr_item.getcpmin()+"€");
         psViewHolder.distance.setText(curr_item.getDistance()+"m");

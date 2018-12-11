@@ -23,8 +23,7 @@
             android:layout_marginTop="0dp"
             android:text="test"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
         <!-- rating rating -->
         <TextView
             android:id="@+id/rating"
@@ -38,8 +37,7 @@
             android:layout_marginTop="-1dp"
             android:text="3.1"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
         <!-- rating distance -->
         <TextView
             android:id="@+id/distance"
@@ -53,8 +51,7 @@
             android:layout_marginRight="0dp"
             android:text="100"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
         <!-- rating cpmin -->
         <TextView
             android:id="@+id/cpmin"
@@ -68,17 +65,16 @@
             android:layout_marginRight="0dp"
             android:text="min: "
             android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/star_imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/name"
-            android:layout_marginStart="1dp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
             android:layout_toEndOf="@+id/rating"
             android:layout_toRightOf="@+id/rating"
             app:srcCompat="@drawable/ic_star_black_24dp" />
