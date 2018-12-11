@@ -2,6 +2,11 @@ import os
 import json
 import sqlite3 as sql
 import math
+import random
+
+def randomxy():
+	return (random.randint(1,1000),random.randint(1,1000))
+
 
 def test():
     	db = sql.connect('database.db')
@@ -60,8 +65,7 @@ def test():
 
     #print(sorted_distances)
 
-	mxpos = db.execute('SELECT mxpos FROM members WHERE pmid=?',(1,)).fetchone()[0]
-	mypos = db.execute('SELECT mypos FROM members WHERE pmid=?',(1,)).fetchone()[0]
+	mxpos,mypos = db.execute('SELECT mxpos,mypos FROM members WHERE pmid=?',(1,)).fetchone()
 
 	#tmp_mid = 1
 	#recent_list = db.execute('SELECT sid FROM bookings WHERE terminated=? AND mid=?',(1,tmp_mid)).fetchall()
@@ -110,22 +114,47 @@ def test():
 
 	#print(sorted_distances)
 
-	sp_info = db.execute('SELECT psid,sxpos,sypos,cpmin,rating FROM spaces').fetchall()		
+	#sp_info = db.execute('SELECT psid,sxpos,sypos,cpmin,rating FROM spaces').fetchall()		
 
 	#tmp_json = {"error": "OK", "email": email}
-        sl_json = [] 
+        #sl_json = [] 
 
-        for space in sp_info:
-	    tmp_dis = math.sqrt( (mxpos-space[1])*(mxpos-space[1]) + (mypos-space[2])*(mypos-space[2]) )
-
-	    ap_json = {"sid": space[0], "rating": float(space[4]), "cpmin": space[3], "distance": tmp_dis}
-	    sl_json.append(ap_json)
-
-	sorted_ratings = sorted(sl_json, key=lambda k: k['rating'])
-	sorted_ratings.reverse()
+        #for space in sp_info:
+	 #   tmp_dis = math.sqrt( (mxpos-space[1])*(mxpos-space[1]) + (mypos-space[2])*(mypos-space[2]) )
+#
+#	    ap_json = {"sid": space[0], "rating": float(space[4]), "cpmin": space[3], "distance": tmp_dis}
+#	    sl_json.append(ap_json)
+#
+#	sorted_ratings = sorted(sl_json, key=lambda k: k['rating'])
+#	sorted_ratings.reverse()
         #sorted_ratings.append(tmp_json)
 
-        print(sorted_ratings)
+ #       print(sorted_ratings)
 
+	#emails = db.execute('SELECT email FROM members').fetchall()
+
+	#for mail in emails:
+	#	if mail[0] == "ac@hotmail.com":
+	#		print("found")
+
+	#print("done")
+
+	#test_list = db.execute('SELECT * FROM members WHERE email=?',("test@hotmail.com",)).fetchall()
+
+	#print(test_list)	
+	#print(len(test_list))
+
+	#mytmpx, mytmpy = randomxy()
+
+	#print(mytmpx)
+	#print(mytmpy)
+
+	#print(mxpos)
+	#print(mypos)	
+
+	testingl = db.execute('SELECT online FROM members WHERE pmid=?',(1,)).fetchall()
+	print(testingl[0])
+	print(testingl[0][0])
+	
 
 test()
