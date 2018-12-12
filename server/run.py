@@ -51,7 +51,7 @@ class App(object):
 
         db.execute('INSERT INTO members(mname,email,password,carplate,role,mxpos,mypos,online,confirmed) VALUES (?,?,?,?,?,?,?,?,?)',(mname, email, password1, carplate, "Member", -1, -1, 0, 0))
 
-	api_confacc(email)
+	self.api_confacc(email)
 
         pmid = db.execute('SELECT pmid FROM members WHERE email=?',(email,)).fetchone()[0]
 
@@ -84,7 +84,7 @@ class App(object):
 
         mname = db.execute('SELECT mname FROM members WHERE email=?',(email,)).fetchone()[0]
 
-	tmp_x, tmp_y = randomxy()
+	tmp_x, tmp_y = self.randomxy()
 
 	db.execute('UPDATE members SET mxpos=? AND mypos=? WHERE email=?',(tmp_x,tmp_y,email))
 	conf = db.execute('SELECT confirmed FROM members WHERE email=?',(email,)).fetchone()[0]
@@ -553,7 +553,9 @@ class App(object):
     def api_bankpayment(self,cc,valid):
 	pass
 
-    def api_confacc(email):
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    def api_confacc(self,email):
 	db = sql.connect("database.db")
 
 	tmp_member = db.execute('SELECT confirmed FROM members WHERE email=?',(email,)).fetchall()
@@ -572,8 +574,8 @@ class App(object):
 	db.commit()
 	db.close()
 
-def randomxy():
-    return (random.randint(1,1000),random.randint(1,1000))
+    def randomxy(self):
+        return (random.randint(1,1000),random.randint(1,1000))
 
 config={
         '/': {
@@ -584,18 +586,32 @@ config={
             'tools.staticdir.dir': './static'
         }
 }
+# uncomment to run locally
+# import sys
+# ip = "127.0.0.1"
+# port = 8000
+# if len(sys.argv) == 2:
+#     ip = sys.argv[1]
+# elif len(sys.argv) == 3:
+#     ip = sys.argv[1]
+#     port = int(sys.argv[2])
+#
+# cherrypy.config.update({'server.socket_host': ip,
+#                         'server.socket_port': port,
+#                        })
+#
+# cherrypy.quickstart(App(), "/",config)
 
-import sys
-ip = "127.0.0.1"
-port = 8000
-if len(sys.argv) == 2:
-    ip = sys.argv[1]
-elif len(sys.argv) == 3:
-    ip = sys.argv[1]
-    port = int(sys.argv[2])
-
-cherrypy.config.update({'server.socket_host': ip,
-                        'server.socket_port': port,
-                       })
-
-cherrypy.quickstart(App(), "/",config)
+# our WSGI application
+wsgiapp = cherrypy.tree.mount(App())
+# Disable the autoreload which won't play well
+cherrypy.config.update({'engine.autoreload.on': False})
+# let's not start the CherryPy HTTP server
+cherrypy.server.unsubscribe()
+# use CherryPy's signal handling
+cherrypy.engine.signals.subscribe()
+# Prevent CherryPy logs to be propagated
+# to the Tornado logger
+cherrypy.log.error_log.propagate = False
+# Run the engine but don't block on it
+cherrypy.engine.start()
